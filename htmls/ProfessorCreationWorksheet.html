@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worksheet Creator</title>
+    <link rel="stylesheet" href="styletest.css">
+</head>
+<body>
+    <div class="WorksheetCreationDash">
+        <h1>Worksheet Creator</h1>
+        <form id="worksheetForm">
+            <label for="worksheetTitle">Worksheet Title:</label><br>
+            <input type="text" id="worksheetTitle" name="worksheetTitle" required><br><br>
+            
+            <div id="questionsContainer">
+                <!-- Questions will be dynamically added here -->
+            </div>
+            
+            <button type="button" id="addMultipleChoiceQuestion" class="btn">Add Multiple Choice Question</button>
+            <button type="button" id="addShortAnswerQuestion" class="btn">Add Short Answer Question</button>
+            <button type="button" id="addDropdownQuestion" class="btn">Add Dropdown Question</button>
+            <button type="button" id="addSelectAllQuestion" class="btn">Add Select All That Apply Question</button><br><br>
+
+            <!-- Hidden input field to store the selected question type -->
+            <input type="hidden" id="questionType" name="questionType">
+            
+            <button type="button" id="createWorksheetBtn" class="btn" onclick="logWorksheet()">Done</button>
+        </form>
+    
+        <div id="worksheetDisplay"></div>
+    </div>
+
+    <script>
+
+
+        function addQuestion(type) {
+            var questionsContainer = document.getElementById("questionsContainer");
+
+            // Create a div for the question
+            var questionDiv = document.createElement("div");
+            questionDiv.classList.add("question");
+            
+            // Create input field for the question
+            var questionInput = document.createElement("input");
+            questionInput.type = "text";
+            questionInput.placeholder = "Enter question";
+            questionDiv.appendChild(questionInput);
+            
+            // Create input field for the option A (only for multiple-choice questions)
+            if (type === "multiple-choice" || type === "dropdown" || type === "select-all") {
+                var optionInputA = document.createElement("input");
+                optionInputA.type = "text";
+                optionInputA.placeholder = "Enter option A";
+                questionDiv.appendChild(optionInputA);
+
+                var optionInputB = document.createElement("input");
+                optionInputB.type = "text";
+                optionInputB.placeholder = "Enter option B";
+                questionDiv.appendChild(optionInputB);
+
+                var optionInputC = document.createElement("input");
+                optionInputC.type = "text";
+                optionInputC.placeholder = "Enter option C";
+                questionDiv.appendChild(optionInputC);
+
+                var optionInputD = document.createElement("input");
+                optionInputD.type = "text";
+                optionInputD.placeholder = "Enter option D";
+                questionDiv.appendChild(optionInputD);
+
+                var answerInput = document.createElement("input");
+                answerInput.type = "text";
+                answerInput.placeholder = "Enter correct answer";
+                questionDiv.appendChild(answerInput);
+            }
+
+            // FREE-RESPONSE/ SHORT-ANSWER LOGIC
+        if (type === "short-answer") {
+               // Create input fields for options (hidden from user)
+            var optionInputA = document.createElement("input");
+            optionInputA.type = "text"; // Set type to text
+            optionInputA.value = ""; // Set value to empty string
+            optionInputA.style.display = "none"; // Hide the input field
+            questionDiv.appendChild(optionInputA);
+
+            var optionInputB = document.createElement("input");
+            optionInputB.type = "text";
+            optionInputB.value = "";
+            optionInputB.style.display = "none";
+            questionDiv.appendChild(optionInputB);
+
+            var optionInputC = document.createElement("input");
+            optionInputC.type = "text";
+            optionInputC.value = "";
+            optionInputC.style.display = "none";
+            questionDiv.appendChild(optionInputC);
+
+            var optionInputD = document.createElement("input");
+            optionInputD.type = "text";
+            optionInputD.value = "";
+            optionInputD.style.display = "none";
+            questionDiv.appendChild(optionInputD);
+
+            // Create input field for the correct answer (visible to user)
+            var answerInput = document.createElement("input");
+            answerInput.type = "text";
+            answerInput.value = "";
+            answerInput.style.display = "none";
+            questionDiv.appendChild(answerInput);
+        }
+
+            // Create hidden input field for the question type
+            var questionTypeInput = document.createElement("input");
+            questionTypeInput.type = "hidden";
+            questionTypeInput.value = type;
+            questionDiv.appendChild(questionTypeInput);
+
+            // Append the question div to the questions container
+            questionsContainer.appendChild(questionDiv);
+
+        }
+
+        function logWorksheet() {
+          var worksheetTitle = document.getElementById("worksheetTitle").value;
+          var questions = [];
+          var option_a = []; 
+          var option_b = []; 
+          var option_c = []; 
+          var option_d= []; 
+          var answers = [];
+          var questionTypes = [];
+      
+          var questionDivs = document.querySelectorAll(".question");
+          questionDivs.forEach(function(div) {
+              var questionInput = div.querySelector("input[type='text']:nth-child(1)");
+              var optionAInput = div.querySelector("input[type='text']:nth-child(2)");
+              var optionBInput = div.querySelector("input[type='text']:nth-child(3)");
+              var optionCInput = div.querySelector("input[type='text']:nth-child(4)");
+              var optionDInput = div.querySelector("input[type='text']:nth-child(5)");
+              var answerInput = div.querySelector("input[type='text']:nth-child(6)");
+              var questionType = div.querySelector("input[type='hidden']").value; // Fetch question type dynamically
+ 
+      
+              questions.push(questionInput.value);
+              option_a.push(optionAInput.value);
+              option_b.push(optionBInput.value);
+              option_c.push(optionCInput.value);
+              option_d.push(optionDInput.value);
+              answers.push(answerInput.value);
+              questionTypes.push(questionType);
+              //questionTypes.push(document.getElementById("questionType").value);
+          });
+      
+          // console.log("Worksheet Title:", worksheetTitle);
+          // console.log("Questions:", questions);
+          // console.log("Answers:", answers);
+          // console.log("Question Types:", questionTypes);
+      
+          // Convert worksheet data to a string
+          var dataString = "worksheetTitle=" + encodeURIComponent(worksheetTitle) + 
+                           "&questions=" + encodeURIComponent(questions.join(',')) +
+                           "&option_a=" + encodeURIComponent(option_a.join(',')) +
+                           "&option_b=" + encodeURIComponent(option_b.join(',')) +
+                           "&option_c=" + encodeURIComponent(option_c.join(',')) +
+                           "&option_d=" + encodeURIComponent(option_d.join(',')) +
+                           "&answers=" + encodeURIComponent(answers.join(',')) +
+                           "&questionTypes=" + encodeURIComponent(questionTypes.join(','));
+      
+          // Send the worksheet data to the server using AJAX
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/create-worksheet", true);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log("Worksheet data sent successfully");
+                window.location.href = "/ProfessorViewCreatedWorksheet.html"; // Redirect after successful data submission
+            }
+        };
+          xhr.send(dataString);
+      }
+      
+
+        document.getElementById("addMultipleChoiceQuestion").addEventListener("click", function() {
+            addQuestion("multiple-choice");
+        });
+
+        document.getElementById("addShortAnswerQuestion").addEventListener("click", function() {
+            addQuestion("short-answer");
+        });
+
+        document.getElementById("addDropdownQuestion").addEventListener("click", function() {
+            addQuestion("dropdown");
+        });
+
+        document.getElementById("addSelectAllQuestion").addEventListener("click", function() {
+            addQuestion("select-all");
+        });
+    </script>
+</body>
+</html>

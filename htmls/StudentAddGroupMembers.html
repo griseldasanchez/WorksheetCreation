@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Group Members</title>
+    <link rel="stylesheet" href="styleStudentAddGroupMembers.css">
+</head>
+<body>
+    <header>
+        <h1>Add Group Members</h1><br>
+    </header>
+    <form id="groupForm" action="/submit-group" method="get" class="form">
+        <div id="members" class="member-container">
+            <div class="member">
+                <label for="member1" class="label">Member 1:</label>
+                <input type="text" id="member1" name="member1" class="input" required>
+            </div>
+            <div class="member">
+                <label for="member2" class="label">Member 2:</label>
+                <input type="text" id="member2" name="member2" class="input" required>
+            </div>
+            <div class="member">
+                <label for="member3" class="label">Member 3:</label>
+                <input type="text" id="member3" name="member3" class="input" required>
+            </div>
+        </div>
+        <div id="addMemberBtn" class="button-container">
+            <button type="button" onclick="addMember()" class="btn">Add Member</button>
+        </div>
+
+        <div id="submitBtn" class="button-container">
+            <button type="submit" class="btn">Submit Group</button>
+        </div>
+       
+    </form>
+    
+   
+    <script>
+        function addMember() {
+            const membersContainer = document.getElementById("members");
+            const memberCount = membersContainer.children.length;
+            if (memberCount >= 3 && memberCount < 4) {
+                const newMember = document.createElement("div");
+                newMember.classList.add("member");
+                newMember.innerHTML = `
+                    <label for="member${memberCount + 1}" class="label">Member ${memberCount + 1}:</label>
+                    <input type="text" id="member${memberCount + 1}" name="member${memberCount + 1}" class="input" required>
+                `;
+                membersContainer.appendChild(newMember);
+            } else {
+                alert("You can add a maximum of 4 members.");
+            }
+        }   
+       
+    </script>
+
+</body>
+</html>

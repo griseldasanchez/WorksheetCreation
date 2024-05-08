@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor Dashboard in HTML and CSS | FeedGTea</title>
+    <link rel="stylesheet" href="styleProfessorViewCreatedWorksheet.css">
+</head>
+<body>
+    <header>
+        <h1>View Created Worksheets</h1><br>
+    </header>
+    
+    <!--form>
+        < <div class="worksheet7">
+            <h2>Module 7 Worksheet</h2>
+            <img src="module7.jpg" alt="Module 7 Image" width="200">
+        </div> >
+        <br>
+        <div class="logoutbtn">
+            <button type="submit" formaction="index.html" class="btn">Log Out</button>
+        </div>
+    </form-->
+
+    <form action="/logout" method="get">
+        <div class="logoutbtn">
+            <button type="submit" class="btn">Log Out</button>
+        </div>
+    </form>
+
+    <div id="worksheet-container"></div>
+
+    <p></p>
+    <p></p>
+    
+    <script>
+        const worksheetContainer = document.getElementById('worksheet-container');
+
+        fetch('/data')
+             .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                 }
+                  return response.json();
+                 })
+
+            .then(data => {
+                // Group data by worksheet_id
+                const worksheets = {};
+                data.forEach(worksheet => {
+                    if (!worksheets[worksheet.worksheet_id]) {
+                        worksheets[worksheet.worksheet_id] = [];
+                    }
+                    worksheets[worksheet.worksheet_id].push(worksheet);
+                });
+
+                // Create a table for each worksheet
+                Object.keys(worksheets).forEach(worksheetId => {
+                    const worksheetData = worksheets[worksheetId];
+                    // console.log('worksheetdata', worksheetData[0].worksheet_name);
+
+                    // Create a header for the worksheet
+                    const worksheetHeader = document.createElement('h3');
+                    worksheetHeader.textContent = `Worksheet Name:  ${worksheetData[0].worksheet_name}`;
+                    worksheetContainer.appendChild(worksheetHeader);
+
+                    const table = document.createElement('table');
+                    table.classList.add('worksheet-table');
+
+                    // Create table header
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    const headers = ['Question Text', 'Option A', 'Option B', 'Option C', 'Option D', 'Correct Answer', 'Question Type'];
+                    headers.forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    // Create table body
+                    const tbody = document.createElement('tbody');
+                    worksheetData.forEach(worksheetItem => {
+                        const row = document.createElement('tr');
+                        headers.forEach(headerText => {
+                            const td = document.createElement('td');
+                            if (headerText === 'Question Text') {
+                                td.textContent = worksheetItem.question_prompt;
+                            } else if (headerText === 'Question Type') {
+                                td.textContent = worksheetItem.type_name;
+                            } else {
+                                td.textContent = worksheetItem[headerText.toLowerCase().replace(' ', '_')];
+                            }
+                            row.appendChild(td);
+                        });
+                        tbody.appendChild(row);
+                    });
+                    table.appendChild(tbody);
+
+                    // Append the table to the worksheet container
+                    worksheetContainer.appendChild(table);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching worksheet data:', error);
+                worksheetContainer.textContent = 'Error retrieving worksheet data.';
+            });
+    </script>
+</body>
+</html>
